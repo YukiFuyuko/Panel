@@ -14,26 +14,9 @@ jobs:
           sudo apt-get update
           sudo apt-get upgrade -y
 
-      - name: Install KDE Plasma + xrdp
-        run: |
-          sudo apt-get install -y kde-plasma-desktop xrdp dbus-x11
-
-          # Enable xrdp
-          sudo systemctl enable xrdp
-          sudo systemctl start xrdp
-
-          # Ensure user config exists and is writable
-          sudo -u rdp mkdir -p /home/rdp/.config
-          sudo chown -R rdp:rdp /home/rdp/.config
-
-          # Set KDE Plasma as default session for xrdp
-          echo "startplasma-x11" | sudo tee /home/rdp/.xsession
-          sudo chown rdp:rdp /home/rdp/.xsession
-
-
       - name: Create RDP User with Secure Password
         run: |
-          # Generate a random strong password
+          # Generate random strong password
           PASS=$(< /dev/urandom tr -dc 'A-Za-z0-9!@#$%^&*()_+=' | head -c20)
 
           # Create user "rdp"
@@ -45,6 +28,22 @@ jobs:
 
           # Export creds
           echo "RDP_CREDS=User: rdp | Password: $PASS" >> $GITHUB_ENV
+          echo "PASS=$PASS" >> $GITHUB_ENV
+
+      - name: Install KDE Plasma + xrdp
+        run: |
+          sudo apt-get install -y kde-plasma-desktop xrdp dbus-x11
+
+          # Enable xrdp
+          sudo systemctl enable xrdp
+          sudo systemctl start xrdp
+
+          # Ensure config dir exists for rdp user
+          sudo -u rdp mkdir -p /home/rdp/.config
+
+          # Set KDE as default session
+          echo "startplasma-x11" | sudo tee /home/rdp/.xsession
+          sudo chown rdp:rdp /home/rdp/.xsession /home/rdp/.config
 
       - name: Install Tailscale
         run: |
