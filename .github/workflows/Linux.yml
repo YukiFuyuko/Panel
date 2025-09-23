@@ -16,15 +16,20 @@ jobs:
 
       - name: Install KDE Plasma + xrdp
         run: |
-          # Install KDE desktop and xrdp server
           sudo apt-get install -y kde-plasma-desktop xrdp dbus-x11
 
           # Enable xrdp
           sudo systemctl enable xrdp
           sudo systemctl start xrdp
 
-          # Configure xrdp to use KDE Plasma
-          echo "startplasma-x11" > ~/.xsession
+          # Ensure user config exists and is writable
+          sudo -u rdp mkdir -p /home/rdp/.config
+          sudo chown -R rdp:rdp /home/rdp/.config
+
+          # Set KDE Plasma as default session for xrdp
+          echo "startplasma-x11" | sudo tee /home/rdp/.xsession
+          sudo chown rdp:rdp /home/rdp/.xsession
+
 
       - name: Create RDP User with Secure Password
         run: |
