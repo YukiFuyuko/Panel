@@ -41,6 +41,12 @@ jobs:
           # Ensure config dir exists for rdp user
           sudo -u rdp mkdir -p /home/rdp/.config
 
+          cat <<EOF | sudo tee /home/rdp/.config/kwinrc
+          [Compositing]
+          Backend=XRender
+          Enabled=false
+          EOF
+
           # Set KDE as default session
           echo "startplasma-x11" | sudo tee /home/rdp/.xsession
           sudo chown rdp:rdp /home/rdp/.xsession /home/rdp/.config
