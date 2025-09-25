@@ -48,7 +48,7 @@ jobs:
           EOF
 
           # Set KDE as default session
-          echo "startplasma-x11" | sudo tee /home/rdp/.xsession
+          echo "MESA_NO_ERROR=1 MESA_GL_VERSION_OVERRIDE=4.6 MESA_GLES_VERSION_OVERRIDE=3.2 GALLIUM_DRIVER=llvmpipe startplasma-x11" | sudo tee /home/rdp/.xsession
           sudo chown rdp:rdp /home/rdp/.xsession /home/rdp/.config
 
       - name: Install Tailscale
